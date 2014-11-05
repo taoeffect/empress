@@ -1,57 +1,27 @@
-![](https://travis-ci.org/al3x/sovereign.png?branch=master):https://travis-ci.org/al3x/sovereign
+[![](https://travis-ci.org/taoeffect/empress.png?branch=master)](https://travis-ci.org/taoeffect/empress)
 
 Introduction
 ============
 
-Sovereign is a set of [Ansible](http://ansibleworks.com) playbooks that you can
-use to build and maintain your own [personal
-cloud](http://www.urbandictionary.com/define.php?term=clown%20computing) (I know
-I know). It’s based entirely on open source software, so you’re in control.
+Empress is a set of [Ansible][ansible] playbooks that you can use to build and
+maintain your own [personal cloud][clown-computing] (I know I know). It’s based
+entirely on open source software, so you’re in control.
 
 If you’ve never used Ansible before, you a) are in for a treat and b) might find
 these playbooks useful to learn from, since they show off a fair bit of what the
 tool can do.
 
-Background and Motivations
---------------------------
+[**Empress is a lightweight email-only fork of Sovereign.**][sovereign] Some
+features and security fixes [may be backported upstream][upstream-example]. This
+is not marked as a fork by GitHub, because we do not intend to submit regular
+pull requests upstream, or to sync all changes back from sovereign. For our
+use-case, [GitHub's normal forking model doesn't work well][bad-forking].
 
-I had been a paying Google Apps customer for personal and corporate use since
-the service was in beta. Until several weeks ago, that is. I was about to set up
-another Google Apps account for a new project when I stopped to consider what I
-would be funding with my USD \$50 per user per year:
-
-1.  [A seriously questionable privacy track
-    record](https://en.wikipedia.org/wiki/Criticism_of_Google#Privacy).
-2.  [A dwindling commitment to open
-    standards](https://www.eff.org/deeplinks/2013/05/google-abandons-open-standards-instant-messaging).
-3.  [A lack of long-term commitment to
-    products](http://www.quora.com/Google-Products/What-are-all-the-Google-products-that-have-been-shut-down).
-4.  Development of Google+: a cynical and [unimaginative Facebook
-    ripoff](http://gigaom.com/2012/03/15/google-plus-the-problem-isnt-design-its-a-lack-of-demand/)
-    that’s [intruding into progressively more Google
-    products](http://bits.blogs.nytimes.com/2012/03/06/google-defending-google-plus-shares-usage-numbers/?_r=0).
-
-To each her/his own, but personally I saw little reason to continue
-participating in the Google ecosystem. It had been years since I last ran my own
-server for email and such, but it’s only gotten cheaper and easier to do so.
-Plus, none of the commercial alternatives I looked at provided all the services
-I was looking for.
-
-Rather than writing up a long and hard-to-follow set of instructions, I decided
-to share my server setup in a format that you can more or less just clone,
-configure, and run. Ansible seemed like the most appropriate way to do that:
-it’s simple, straightforward, and easy to pick up.
-
-I’ve been using this setup for about a month now and it’s been great. It’s also
-replaced some non-Google services I used, saving me money and making me feel
-like I’ve got a little more privacy.
-
-A big chunk of the initial version was inspired by [this post by Drew
-Crawford](http://sealedabstract.com/code/nsa-proof-your-e-mail-in-2-hours/).
-Unlike Drew, my goal is not “NSA-proofing” email, just providing a reasonable
-alternative to Google Apps that isn’t wildly insecure. If you need serious
-privacy and security (ex: for dissident activities), Sovereign might be useful
-as a starting point but will require additional work. Be careful out there.
+  [ansible]: http://ansibleworks.com
+  [clown-computing]: http://www.urbandictionary.com/define.php?term=clown%20computing
+  [sovereign]: https://github.com/al3x/sovereign
+  [upstream-example]: https://github.com/al3x/sovereign/issues/322
+  [bad-forking]: https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/#commit-was-made-in-a-fork
 
 Services Provided
 -----------------
@@ -68,47 +38,18 @@ What do you get if you point this thing at a VPS? All kinds of good stuff!
     [DNSBLs](https://en.wikipedia.org/wiki/DNSBL) to discard spam before it ever
     hits your filters.
 -   Webmail via [Roundcube](http://www.roundcube.net/).
--   Mobile push notifications via
-    [Z-Push](http://z-push.sourceforge.net/soswp/index.php?pages_id=1&t=home).
--   Email client [automatic
-    configuration](https://developer.mozilla.org/en-US/docs/Mozilla/Thunderbird/Autoconfiguration).
--   Jabber/[XMPP](http://xmpp.org/) instant messaging via
-    [Prosody](http://prosody.im/).
--   An RSS Reader via [Selfoss](http://selfoss.aditu.de/).
--   Virtual domains for your email, backed by
-    [PostgreSQL](http://www.postgresql.org/).
+-   Virtual domains for your email, backed by [SQLite](https://www.sqlite.org/).
 -   Secure on-disk storage for email and more via
     [EncFS](http://www.arg0.net/encfs).
--   Spam fighting via [DSPAM](http://dspam.sourceforge.net/) and
-    [Postgrey](http://postgrey.schweikert.ch/).
+-   Spam fighting via [DSPAM](http://dspam.sourceforge.net/)
 -   Mail server verification via [OpenDKIM](http://www.opendkim.org/), so folks
     know you’re legit.
--   [CalDAV](https://en.wikipedia.org/wiki/CalDAV) and
-    [CardDAV](https://en.wikipedia.org/wiki/CardDAV) to keep your calendars and
-    contacts in sync, via [ownCloud](http://owncloud.org/).
--   Your own private [Dropbox](https://www.dropbox.com/), also via
-    [ownCloud](http://owncloud.org/).
--   Your own VPN server via
-    [OpenVPN](http://openvpn.net/index.php/open-source.html).
--   An IRC bouncer via [ZNC](http://wiki.znc.in/ZNC).
--   [Monit](http://mmonit.com/monit/) to keep everything running smoothly (and
-    alert you when it’s not).
--   [collectd](http://collectd.org/) to collect system statistics.
--   Web hosting (ex: for your blog) via [Apache](https://www.apache.org/).
 -   Firewall management via [Uncomplicated Firewall
     (ufw)](https://wiki.ubuntu.com/UncomplicatedFirewall).
 -   Intrusion prevention via [fail2ban](http://www.fail2ban.org/) and rootkit
     detection via [rkhunter](http://rkhunter.sourceforge.net).
 -   SSH configuration preventing root login and insecure password authentication
--   [RFC6238](http://tools.ietf.org/html/rfc6238) two-factor authentication
-    compatible with [Google
-    Authenticator](http://en.wikipedia.org/wiki/Google_Authenticator) and
-    various hardware tokens
 -   Nightly backups to [Tarsnap](https://www.tarsnap.com/).
--   Git hosting via [cgit](http://git.zx2c4.com/cgit/about/) and
-    [gitolite](https://github.com/sitaramc/gitolite).
--   [Newebe](http://newebe.org), a social network.
--   Read-it-later via [Wallabag](https://www.wallabag.org/)
 -   A bunch of nice-to-have tools like [mosh](http://mosh.mit.edu) and
     [htop](http://htop.sourceforge.net) that make life with a server a little
     easier.
@@ -242,38 +183,6 @@ package may be used to generate the required string:
 
     python -c 'import passlib.hash; print(passlib.hash.sha512_crypt.encrypt("password", rounds=5000))'
 
-Same for the IRC password hash…
-
-    # znc --makepass
-    [ ** ] Type your new password.
-    [ ?? ] Enter Password: foo
-    [ ?? ] Confirm Password: foo
-    [ ** ] Kill ZNC process, if it's running.
-    [ ** ] Then replace password in the <User> section of your config with this:
-    <Pass password>
-            Method = sha256
-            Hash = 310c5f99825e80d5b1d663a0a993b8701255f16b2f6056f335ba6e3e720e57ed
-            Salt = YdlPM5yjBmc/;JO6cfL5
-    </Pass>
-    [ ** ] After that start ZNC again, and you should be able to login with the new password.
-
-Take the strings after `Hash =` and `Salt =` and insert them as the value for
-`irc_password_hash` and `irc_password_salt` respectively.
-
-Alternatively, if you don’t already have `znc` installed, Python 3.3 or higher
-on Linux will generate the appropriate string for you (assuming your password is
-`password`):
-
-    python3 -c 'import crypt; print("irc_password_salt: {}\nirc_password_hash: {}".format(*crypt.crypt("password", salt=crypt.METHOD_SHA256).split("$")[2:]))'
-
-On OS X and other platforms the passlib:https://pythonhosted.org/passlib/
-package may be used to generate the required string:
-
-    python -c 'import passlib.hash; print("irc_password_salt: {}\nirc_password_hash: {}".format(*passlib.hash.sha256_crypt.encrypt("password", rounds=5000).split("$")[2:]))'
-
-For git hosting, copy your public key into place.
-`cp ~/.ssh/id_rsa.pub roles/git/files/gitolite.pub` or similar.
-
 Finally, replace the TODOs in the file `hosts`. If your SSH daemon listens on a
 non-standard port, add a colon and the port number after the IP address.\
 In that case you also need to add your custom port to the task
@@ -308,14 +217,11 @@ Manager](https://library.linode.com/dns-manager) or similar. Most VPS services
 for this at no charge. If you’re using an existing domain that’s already managed
 elsewhere, you can probably just modify a few records.
 
-Create an `A` records which point to your server IP for:\
- \* `example.com`\
- \* `mail.example.com`\
- \* `autoconfig.example.com` (for email client automatic configuration)\
- \* `read.example.com` (for wallabe)\
- \* `news.example.com` (for selfoss)\
- \* `cloud.example.com` (for owncloud)\
- \* `git.example.com` (for cgit)
+Create an `A` records which point to your server IP for:
+
+- `example.com`
+- `mail.example.com`
+- `autoconfig.example.com` (for email client automatic configuration)
 
 Create a `MX` record for `example.com` which assigns `mail.example.com` as the
 domain’s mail server.
@@ -333,15 +239,6 @@ sure to validate that it’s all working, for example by sending an email to
 <a href="mailto:check-auth@verifier.port25.com">check-auth@verifier.port25.com</a>
 and reviewing the report that will be emailed back to you.
 
-### 7. Miscellaneous Configuration
-
--   Sign in to the ZNC web interface and set things up to your liking. It isn’t
-    exposed through the firewall, so you must first set up an SSH tunnel
-    `ssh deploy`example.com -L 6643:localhost:6643@ and then proceed to
-    http://localhost:6643 in your web browser.
--   Sign into ownCloud to set it up. You should select postgresql as the
-    configuration backend.
-
 How To Use Your New Personal Cloud
 ----------------------------------
 
@@ -356,11 +253,6 @@ page](https://github.com/al3x/sovereign/wiki/Troubleshooting). If the problem
 you encountered, is not listed, please go ahead and [create an
 issue](https://github.com/al3x/sovereign/issues/new). If you already have a
 bugfix and/or workaround, just put them in the issue and the wiki page.
-
-IRC
-===
-
-\#sovereign on [Freenode](http://freenode.net)
 
 Contributing
 ============
