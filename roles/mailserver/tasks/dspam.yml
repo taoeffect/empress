@@ -7,7 +7,7 @@
     - postfix-pcre
 
 - name: Create dspam directory
-  file: state=directory path=/decrypted/dspam group=dspam owner=dspam
+  file: state=directory path=/decrypted/dspam group=dspam owner=dspam mode=750
 
 - name: Put dspam configuration files in place
   copy: src=etc_dspam_{{ item }} dest=/etc/dspam/{{ item }} owner=dspam group=dspam

@@ -58,6 +58,7 @@ fi
 cd /home/
 
 # Dump PostgreSQL to file
+umask 077 # prevents r/w for group and others
 sudo -u postgres pg_dumpall -c | gzip > /decrypted/postgresql-backup.sql.gz
 
 # Do backups

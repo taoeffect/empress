@@ -1,0 +1,23 @@
+---
+- name: migrate over user from dreamhost
+  command: >
+    {% set username, domain = item.key.split("@") %}
+    dsync -o imapc_host={{ item.value.imap_host }}
+    -o imapc_password='{{ item.value.password }}'
+    -o imapc_user={{ item.key }}
+    -o mail_location=maildir:/decrypted/{{ domain }}/{{ username }}
+    -o imapc_features='rfc822.size{# fetch-headers #}'
+    -o mail_prefetch_count=20
+    -o imapc_list_prefix=INBOX
+    -o imapc_port=993
+    -o imapc_ssl=imaps
+    -o imapc_ssl_ca_dir=/etc/ssl
+    -o imapc_ssl_verify=no
+    -u {{ item.key }}
+    -v -R backup imapc:
+  args:
+    creates: >
+      {% set username, domain = item.key.split("@") %}
+      /decrypted/{{ domain }}/{{ username }}/dovecot.index.log
+  with_dict: mail_migration
+  tags: migration

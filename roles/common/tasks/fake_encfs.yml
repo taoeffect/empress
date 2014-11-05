@@ -1,0 +1,2 @@
+- name: Create fake decrypted directory
+  file: state=directory path=/decrypted group=mail mode=771

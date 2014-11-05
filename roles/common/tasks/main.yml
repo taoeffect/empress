@@ -1,6 +1,9 @@
 ---
 # Defines tasks applicable across all machines in the infrastructure.
 
+- name: Add backports repository
+  apt_repository: repo="deb http://http.debian.net/debian wheezy-backports main"
+
 - name: Update apt cache
   apt: update_cache=yes
 
@@ -10,23 +13,22 @@
 - name: Install necessities and nice-to-haves
   apt: pkg={{ item }} state=installed
   with_items:
-    - apache2
-    - apt-transport-https
     - apticron
     - build-essential
-    - debian-goodies
-    - git
     - htop
     - iftop
     - iotop
     - mosh
-    - python-software-properties
-    - ruby1.9.3
-    - screen
+    - sqlite3
     - sudo
     - update-notifier-common
-    - vim
     - zsh
+
+- name: Install necessities and nice-to-haves (from backports)
+  apt: pkg={{ item }} state=installed default_release=wheezy-backports
+  with_items:
+    - git
+    - tmux
 
 - name: Install unattended upgrades (Debian/Ubuntu only)
   apt: pkg=unattended-upgrades state=installed
@@ -35,35 +37,10 @@
 - name: Apticron email configuration
   template: src=apticron.conf.j2 dest=/etc/apticron/apticron.conf
 
-- name: Disable default Apache site
-  command: a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default
-  notify: restart apache
-
-- name: Enable Apache headers module
-  command: a2enmod headers creates=/etc/apache2/mods-enabled/headers.load
-  notify: restart apache
-
-- name: Set ServerName for Apache
-  template: src=fqdn.j2 dest=/etc/apache2/conf.d/fqdn
-  notify: restart apache
-  when: ansible_distribution_release != 'trusty'
-
-- name: Create ServerName configuration file for Apache for Ubuntu Trusty
-  template: src=fqdn.j2 dest=/etc/apache2/conf-available/fqdn.conf
-  when: ansible_distribution_release == 'trusty'
-
-- name: Set ServerName for Apache for Ubuntu Trusty
-  command: a2enconf fqdn creates=/etc/apache2/conf-enabled/fqdn.conf
-  notify: restart apache
-  when: ansible_distribution_release == 'trusty'
-
-- include: encfs.yml tags=encfs
+#- include: mariadb.yml tags=mariadb
+- include: fake_encfs.yml tags=fake_encfs # sets up /decrypted
 - include: users.yml tags=users
 - include: ssl.yml tags=ssl
 - include: ufw.yml tags=ufw
 - include: security.yml tags=security
 - include: ntp.yml tags=ntp
-- include: google_auth.yml tags=google_auth
-  when: ansible_distribution_release != 'trusty'
-- include: google_auth_mod.yml tags=google_auth
-  when: ansible_distribution_release == 'trusty'

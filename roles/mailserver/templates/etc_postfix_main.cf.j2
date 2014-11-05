@@ -40,13 +40,33 @@ smtpd_tls_cert_file=/etc/ssl/certs/wildcard_combined.pem
 smtpd_tls_key_file=/etc/ssl/private/wildcard_private.key
 smtpd_use_tls=yes
 smtpd_tls_auth_only = yes
-smtp_tls_security_level = may
-smtp_tls_loglevel = 2
 smtpd_tls_received_header = yes
 smtp_tls_note_starttls_offer = yes
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 # http://www.postfix.org/FORWARD_SECRECY_README.html
-smtp_tls_ciphers = medium
+
+
+# have a look at this link for more options:
+# http://www.postfix.org/postconf.5.html#smtp_tls_security_level
+# WARNING: Forcing encryption might break some servers
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+
+# BetterCrypto <https://bettercrypto.org/>
+smtpd_tls_loglevel = 0
+smtp_tls_loglevel = 1
+tls_preempt_cipherlist = yes
+tls_ssl_options = NO_COMPRESSION
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# Ciphers and Protocols
+#smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
+smtp_tls_ciphers = high
+smtpd_tls_mandatory_ciphers=high
+tls_high_cipherlist=EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
+smtpd_tls_eecdh_grade=ultra
 
 
 smtpd_sasl_type = dovecot
@@ -68,7 +88,7 @@ smtpd_recipient_restrictions =
   reject_non_fqdn_hostname,
   reject_non_fqdn_recipient,
   reject_unknown_recipient_domain,
-  check_policy_service inet:127.0.0.1:10023,
+  # check_policy_service inet:127.0.0.1:10023, # postgrey
   permit
 
 # See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
@@ -89,9 +109,11 @@ inet_interfaces = all
 # dovecot db
 virtual_transport = dovecot
 dovecot_destination_recipient_limit = 1
-virtual_mailbox_domains = pgsql:/etc/postfix/pgsql-virtual-mailbox-domains.cf
-virtual_mailbox_maps = pgsql:/etc/postfix/pgsql-virtual-mailbox-maps.cf
-virtual_alias_maps = pgsql:/etc/postfix/pgsql-virtual-alias-maps.cf
+virtual_mailbox_domains = {{ mail_db }}:/etc/postfix/{{ mail_db }}-virtual-mailbox-domains.cf
+virtual_mailbox_maps = {{ mail_db }}:/etc/postfix/{{ mail_db }}-virtual-mailbox-maps.cf
+virtual_alias_maps = {{ mail_db }}:/etc/postfix/{{ mail_db }}-virtual-alias-maps.cf
+# TODO: might break forwarding
+#smtp_generic_maps = {{ mail_db }}:/etc/postfix/{{ mail_db }}-virtual-alias-maps.cf
 local_recipient_maps = $virtual_mailbox_maps
 
 # OpenDKIM

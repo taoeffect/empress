@@ -4,40 +4,26 @@
     - libsasl2-modules
     - postfix
     - postfix-pcre
-    - postfix-pgsql
-    - postgresql-9.1
-    - postgrey
+    #- postfix-mysql
     - python-psycopg2
     - sasl2-bin
-  when: ansible_distribution_release != 'trusty'
-
-- name: Install Postfix 9.3 and related packages for Ubuntu Trusty
-  apt: pkg={{ item }} state=installed
-  with_items:
-    - libsasl2-modules
-    - postfix
-    - postfix-pcre
-    - postfix-pgsql
-    - postgresql-9.3
-    - postgrey
-    - python-psycopg2
-    - sasl2-bin
-  when: ansible_distribution_release == 'trusty'
-
-- name: Set postgres password
-  command: sudo -u {{ db_admin_username }} psql -d {{ db_admin_username }} -c "ALTER USER postgres with  password '{{ db_admin_password }}';"
-  notify: import sql postfix
 
 - name: Create database user for mail server
-  postgresql_user: login_host=localhost login_user={{ db_admin_username }} login_password="{{ db_admin_password }}" name={{ mail_db_username }} password="{{ mail_db_password }}" state=present
+  mysql_user: >
+    user={{ mail_db_username }} password={{ mail_db_password }}
+    state=present priv="mailserver.*:ALL"
+  when: mail_db == "mysql"
   notify: import sql postfix
 
 - name: Create database for mail server
-  postgresql_db: login_host=localhost login_user={{ db_admin_username }} login_password="{{ db_admin_password }}" name={{ mail_db_database }} state=present owner={{ mail_db_username }}
+  mysql_db: name={{ mail_db_database }} state=present
+  when: mail_db == "mysql"
   notify: import sql postfix
 
 - name: Copy import.sql
-  template: src=mailserver.sql.j2 dest=/etc/postfix/import.sql owner=root group=root mode=0600
+  template: >
+    src=mailserver.{{ mail_db }}.j2 dest=/etc/postfix/import.sql
+    owner=root group=root mode=0600
   notify: import sql postfix
 
 - name: Create postfix maps directory
@@ -59,9 +45,9 @@
 - name: Copy additional postfix configuration files
   template: src=etc_postfix_{{ item }}.j2 dest=/etc/postfix/{{ item }} owner=root group=root
   with_items:
-    - pgsql-virtual-alias-maps.cf
-    - pgsql-virtual-mailbox-domains.cf
-    - pgsql-virtual-mailbox-maps.cf
+    - "{{ mail_db }}-virtual-alias-maps.cf"
+    - "{{ mail_db }}-virtual-mailbox-domains.cf"
+    - "{{ mail_db }}-virtual-mailbox-maps.cf"
   notify: restart postfix
 
 - name: Set firewall rules for postfix

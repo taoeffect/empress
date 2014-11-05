@@ -5,22 +5,8 @@
     - dovecot-imapd
     - dovecot-lmtpd
     - dovecot-managesieved
-    - dovecot-pgsql
+    - dovecot-{{ mail_db }}
     - dovecot-pop3d
-    - postgresql-9.1
-  when: ansible_distribution_release != 'trusty'
-
-- name: Install Dovecot and related packages for Ubuntu trusty
-  apt: pkg={{ item }} state=installed
-  with_items:
-    - dovecot-core
-    - dovecot-imapd
-    - dovecot-lmtpd
-    - dovecot-managesieved
-    - dovecot-pgsql
-    - dovecot-pop3d
-    - postgresql-9.3
-  when: ansible_distribution_release == 'trusty'
 
 - name: Create vmail group
   group: name=vmail state=present gid=5000
@@ -29,11 +15,14 @@
   user: name=vmail group=vmail state=present uid=5000 home=/decrypted shell=/usr/sbin/nologin
 
 - name: Ensure mail domain directories are in place
-  file: state=directory path=/decrypted/{{ item.name }} owner=vmail group=dovecot mode=770
+  file: state=directory path=/decrypted/{{ item }} owner=vmail group=dovecot mode=770
   with_items: mail_virtual_domains
 
 - name: Ensure mail directories are in place
-  file: state=directory path=/decrypted/{{ item.domain }}/{{ item.account }} owner=vmail group=dovecot
+  file: >
+    state=directory
+    path=/decrypted/{{ item.account.split("@")[0] }}/{{ item.account.split("@")[1] }}
+    owner=vmail group=dovecot
   with_items: mail_virtual_users
 
 - name: Copy dovecot.conf into place

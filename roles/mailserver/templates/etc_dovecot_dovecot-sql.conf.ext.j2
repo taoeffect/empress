@@ -26,7 +26,7 @@
 # );
 
 # Database driver: mysql, pgsql, sqlite
-driver = pgsql
+driver = {{ mail_db }}
 
 # Database connection string. This is driver-specific setting.
 #
@@ -51,7 +51,7 @@ driver = pgsql
 #     option_file         - Read options from the given file instead of
 #                           the default my.cnf location
 #     option_group        - Read options from the given group (default: client)
-# 
+#
 #   You can connect to UNIX sockets by using host: host=/var/run/mysql.sock
 #   Note that currently you can't use spaces in parameters.
 #
@@ -63,7 +63,11 @@ driver = pgsql
 #   connect = host=sql.example.com dbname=virtual user=virtual password=blarg
 #   connect = /etc/dovecot/authdb.sqlite
 #
+{% if mail_db == "sqlite" %}
+connect = "/etc/postfix/authdb.sqlite"
+{% else %}
 connect = "host=127.0.0.1 dbname={{ mail_db_database }} user={{ mail_db_username }} password='{{ mail_db_password }}'"
+{% endif %}
 
 # Default password scheme.
 #
@@ -90,7 +94,7 @@ default_pass_scheme = SHA512-CRYPT
 #   %u = entire user@domain
 #   %n = user part of user@domain
 #   %d = domain part of user@domain
-# 
+#
 # Note that these can be used only as input to SQL query. If the query outputs
 # any of these substitutions, they're not touched. Otherwise it would be
 # difficult to have eg. usernames containing '%' characters.

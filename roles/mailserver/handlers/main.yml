@@ -11,5 +11,7 @@
   service: name=tomcat6 state=restarted
 
 - name: import sql postfix
-  action: shell PGPASSWORD='{{ mail_db_password }}' psql -h localhost -d {{ mail_db_database }} -U {{ mail_db_username }} -f /etc/postfix/import.sql --set ON_ERROR_STOP=1
+  shell: umask 077; sqlite3 /etc/postfix/authdb.sqlite < /etc/postfix/import.sql
+  #mysql_db: name={{ mail_db_database }} state=import target=/etc/postfix/import.sql
+  #action: shell PGPASSWORD='{{ mail_db_password }}' psql -h localhost -d {{ mail_db_database }} -U {{ mail_db_username }} -f /etc/postfix/import.sql --set ON_ERROR_STOP=1
   notify: restart postfix

@@ -1,0 +1,14 @@
+---
+# Port mailboxes from dreamhost to sovereign
+# RUN THIS AFTER site.yml, BUT BEFORE LOGGING IN
+
+- hosts: all
+  user: deploy
+  sudo: True
+  vars_files:
+    - vars/defaults.yml
+    - vars/disabled_extras.yml
+    - vars/mail.yml
+    - vars/user.yml
+  roles:
+    - migration

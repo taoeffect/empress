@@ -1,0 +1,40 @@
+-- If tables are not dropped, have to truncate before insert or use "insert or replace" (not postgres compatible)
+
+DROP TABLE IF EXISTS "virtual_users";
+DROP TABLE IF EXISTS "virtual_aliases";
+DROP TABLE IF EXISTS "virtual_domains";
+
+CREATE TABLE IF NOT EXISTS "virtual_domains" (
+        "name" TEXT NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS "virtual_users" (
+        "password" TEXT NOT NULL,
+        "email" TEXT NOT NULL UNIQUE PRIMARY KEY
+        -- FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "virtual_aliases" (
+        "source" TEXT NOT NULL,
+        "destination" TEXT NOT NULL
+        -- FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+);
+
+{% for virtual_domain in mail_virtual_domains %}
+INSERT INTO "virtual_domains" ("name") VALUES ('{{ virtual_domain }}');
+{% endfor %}
+
+{% for virtual_user in mail_virtual_users %}
+INSERT INTO "virtual_users"  ("password" , "email")
+	VALUES (
+		'{{ virtual_user.password_hash }}',
+		'{{ virtual_user.account }}'
+	);
+{% endfor %}
+
+{% if mail_virtual_aliases is defined %}
+{% for item in mail_virtual_aliases %}
+INSERT INTO "virtual_aliases" ("source", "destination")
+    VALUES ('{{ item.keys()[0] }}', '{{ item.values()[0] }}');
+{% endfor %}
+{% endif %}

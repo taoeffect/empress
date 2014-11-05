@@ -1,0 +1,22 @@
+---
+- name: Add the mariadb apt gpg key
+  apt_key: keyserver=keyserver.ubuntu.com id=0xcbcb082a1bb943db
+
+- name: Install lightweight mariadb config
+  copy: src=etc_mysql_my.cnf dest=/etc/mysql/my.cnf
+
+# Please make sure your pinning settings are correct first!
+#   Package: *
+#   Pin: release o=MariaDB
+#   Pin-Priority: 1000
+# man apt_preferences
+- name: Add the mariadb repository
+  apt_repository: >
+    repo="deb http://ams2.mirrors.digitalocean.com/mariadb/repo/10.1/debian wheezy main"
+
+- name: Install mariadb
+  apt: pkg={{ item }}
+  with_items:
+    - mariadb-server-10.1
+    - mariadb-client-10.1
+    - python-mysqldb
