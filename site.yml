@@ -14,5 +14,5 @@
   roles:
     - common
     - mailserver
-    - tarsnap # TODO FIXME TODO FIXME
+    - tarsnap
     # - mailpile # fix this
