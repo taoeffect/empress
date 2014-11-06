@@ -7,7 +7,7 @@ Introduction
 
 1. Making it __simple__ to run __your own__ secure email server.
 2. Making it __simple__ to __escape__ from your existing email provider to your own server.
-3. Re-decentralizing email.
+3. Bringing down the cost of running your own secure email server.
 
 Some features and security fixes [may be backported to sovereign][upstream-example]. This
 is not marked as a fork by GitHub because we do not intend to submit regular
