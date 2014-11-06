@@ -157,8 +157,8 @@ line:
 
 ### 4. Configure your installation
 
-Modify the settings in `vars/user.yml` to your liking. If you want to see how
-they’re used in context, just search for the corresponding string.
+Modify the settings in `vars/user.yml` and `vars/mail.yml` to your liking (these two files will likely be combined).
+If you want to see how they’re used in context, just search for the corresponding string.
 
 Setting `password_hash` for your mail users is a bit tricky. You can generate
 one using [doveadm-pw](http://wiki2.dovecot.org/Tools/Doveadm/Pw).
