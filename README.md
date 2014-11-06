@@ -3,22 +3,12 @@
 Introduction
 ============
 
-Empress is a set of [Ansible][ansible] playbooks that you can use to build and
-maintain your own [personal cloud][clown-computing] (I know I know). It’s based
-entirely on open source software, so you’re in control.
-
-If you’ve never used Ansible before, you a) are in for a treat and b) might find
-these playbooks useful to learn from, since they show off a fair bit of what the
-tool can do.
-
 [**Empress is a lightweight email-only fork of Sovereign.**][sovereign] Some
 features and security fixes [may be backported upstream][upstream-example]. This
 is not marked as a fork by GitHub, because we do not intend to submit regular
 pull requests upstream, or to sync all changes back from sovereign. For our
 use-case, [GitHub's normal forking model doesn't work well][bad-forking].
 
-  [ansible]: http://ansibleworks.com
-  [clown-computing]: http://www.urbandictionary.com/define.php?term=clown%20computing
   [sovereign]: https://github.com/al3x/sovereign
   [upstream-example]: https://github.com/al3x/sovereign/issues/322
   [bad-forking]: https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/#commit-was-made-in-a-fork

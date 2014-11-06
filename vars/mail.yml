@@ -21,6 +21,7 @@ mail_virtual_aliases:
   - root@taoeffect.com: "{{ admin_email }}"
   - postmaster@taoeffect.com: "{{ admin_email }}"
   - webmaster@taoeffect.com: "{{ admin_email }}"
+  # example of store-and-forward
   - taoeffect@sovereign-test.benjam.info: itistoday@gmail.com
   - taoeffect@sovereign-test.benjam.info: taoeffect@sovereign-test.benjam.info
   - fwd@sovereign-test.benjam.info: taoeffect@gmail.com
