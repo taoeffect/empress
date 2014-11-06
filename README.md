@@ -75,8 +75,8 @@ What You’ll Need
 
 1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at
     [RamNode](https://clientarea.ramnode.com/aff.php?aff=909).
-    You’ll probably want at least 512 MB of RAM between Apache, Solr, and
-    PostgreSQL. Mine has 1024.
+    You’ll probably want at least 512 MB of RAM between nginx, Mailpile, Solr,
+    and MariaDB (drop-in replacement for MySQL).
 2.  [64-bit Debian 7](http://www.debian.org/) or an equivalent Linux
     distribution. (You can use whatever distro you want, but deviating from
     Debian will require more tweaks to the playbooks. See Ansible’s different
@@ -112,12 +112,7 @@ Lastly, test your certificate:
 
 #### Self-signed TLS certificate
 
-Purchasing TLS certs, and wildcard certs specifically, can be a significant
-financial burden. It is possible to generate a self-signed TLS certificate (i.e.
-one that isn’t signed by a Certificate Authority) that is free of charge by
-nature. However, since a self-signed cert has no CA chain that can confirm its
-authenticity, some services might behave erratically when using such a
-certificate.
+Self-signed certs are free, easy, but are not yet authenticated by TLS (but [will be](https://github.com/okTurtles/dnschain)).
 
 To create a self-signed TLS cert, run the following commands:
 
