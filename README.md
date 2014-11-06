@@ -3,9 +3,14 @@
 Introduction
 ============
 
-**Empress is a lightweight email-focused fork of [Sovereign][sovereign].** Some
-features and security fixes [may be backported upstream][upstream-example]. This
-is not marked as a fork by GitHub, because we do not intend to submit regular
+**Empress is a lightweight email-focused fork of [Sovereign][sovereign]** focused on:
+
+1. Making it __simple__ to run __your own__ secure email server.
+2. Making it __simple__ to __escape__ from your existing email provider to your own server.
+3. Re-decentralizing email.
+
+Some features and security fixes [may be backported to sovereign][upstream-example]. This
+is not marked as a fork by GitHub because we do not intend to submit regular
 pull requests upstream, or to sync all changes back from sovereign. For our
 use-case, [GitHub's normal forking model doesn't work well][bad-forking].
 
