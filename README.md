@@ -36,11 +36,11 @@ Services Provided
 What do you get if you point this thing at a VPS? All kinds of good stuff!
 
 -   [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) over
-    SSL via [Dovecot](http://dovecot.org/), complete with full text search
+    TLS via [Dovecot](http://dovecot.org/), complete with full text search
     provided by [Solr](https://lucene.apache.org/solr/).
--   [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol) over SSL, also
+-   [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol) over TLS, also
     via Dovecot
--   [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) over SSL
+-   [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol) over TLS
     via Postfix, including a nice set of
     [DNSBLs](https://en.wikipedia.org/wiki/DNSBL) to discard spam before it ever
     hits your filters.
@@ -82,7 +82,7 @@ What You’ll Need
     Debian will require more tweaks to the playbooks. See Ansible’s different
     [packaging](http://www.ansibleworks.com/docs/modules.html#packaging)
     modules.)
-3.  A wildcard SSL certificate. We recommend self-signed certs or the free ones
+3.  A wildcard TLS certificate. We recommend self-signed certs or the free ones
     from [StartSSL](https://startssl.com).
 4.  A [Tarsnap](http://www.tarsnap.com) account with some credit in it. You
     could comment this out if you want to use a different backup service.
@@ -92,15 +92,13 @@ What You’ll Need
 Installation
 ------------
 
-### 1. Get a wildcard SSL certificate
+### 1. Get a wildcard TLS certificate
 
 Generate a private key and a certificate signing request (CSR):
 
     openssl req -nodes -newkey rsa:2048 -keyout roles/common/files/wildcard_private.key -out mycert.csr
 
-Purchase a wildcard cert from a certificate authority, such as [Positive
-SSL](https://positivessl.com) or [AlphaSSL](https://www.alphassl.com). You will
-provide them with the contents of your CSR, and in return they will give you
+Send your CSR to [StartSSL](https://startssl.com). They will give you
 your signed public certificate. Place the certificate in
 `roles/common/files/wildcard_public_cert.crt`.
 
@@ -112,16 +110,16 @@ Lastly, test your certificate:
 
     openssl verify -verbose -CAfile roles/common/files/wildcard_ca.pem roles/common/files/wildcard_public_cert.crt
 
-#### Self-signed SSL certificate
+#### Self-signed TLS certificate
 
-Purchasing SSL certs, and wildcard certs specifically, can be a significant
-financial burden. It is possible to generate a self-signed SSL certificate (i.e.
+Purchasing TLS certs, and wildcard certs specifically, can be a significant
+financial burden. It is possible to generate a self-signed TLS certificate (i.e.
 one that isn’t signed by a Certificate Authority) that is free of charge by
 nature. However, since a self-signed cert has no CA chain that can confirm its
 authenticity, some services might behave erratically when using such a
 certificate.
 
-To create a self-signed SSL cert, run the following commands:
+To create a self-signed TLS cert, run the following commands:
 
     openssl req -nodes -newkey rsa:2048 -keyout roles/common/files/wildcard_private.key -out mycert.csr
     openssl x509 -req -days 365 -in mycert.csr -signkey roles/common/files/wildcard_private.key -out roles/common/files/wildcard_public_cert.crt
