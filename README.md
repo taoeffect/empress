@@ -246,21 +246,12 @@ wiki](https://github.com/al3x/sovereign/wiki/Usage).
 Troubleshooting
 ---------------
 
-If you run into an errors, please check the [wiki
-page](https://github.com/al3x/sovereign/wiki/Troubleshooting). If the problem
-you encountered, is not listed, please go ahead and [create an
-issue](https://github.com/al3x/sovereign/issues/new). If you already have a
-bugfix and/or workaround, just put them in the issue and the wiki page.
+Create an issue.
 
 Contributing
 ============
 
-You may want to set up a [local development
-environment](https://github.com/al3x/sovereign/wiki/Development-Environment) so
-that you don’t have to test on your real server.
-
-If you improve one of the provided playbooks or add an exciting new one, send a
-pull request. Everyone benefits.
+Fork me. Branch off of master. Do stuff. Send PR.
 
 License
 -------
