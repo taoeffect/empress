@@ -3,7 +3,7 @@
 Introduction
 ============
 
-[**Empress is a lightweight email-only fork of Sovereign.**][sovereign] Some
+**Empress is a lightweight email-focused fork of [Sovereign][sovereign].** Some
 features and security fixes [may be backported upstream][upstream-example]. This
 is not marked as a fork by GitHub, because we do not intend to submit regular
 pull requests upstream, or to sync all changes back from sovereign. For our
