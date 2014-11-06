@@ -237,12 +237,6 @@ sure to validate that it’s all working, for example by sending an email to
 <a href="mailto:check-auth@verifier.port25.com">check-auth@verifier.port25.com</a>
 and reviewing the report that will be emailed back to you.
 
-How To Use Your New Personal Cloud
-----------------------------------
-
-We’re collecting known-good client setups [on our
-wiki](https://github.com/al3x/sovereign/wiki/Usage).
-
 Troubleshooting
 ---------------
 
