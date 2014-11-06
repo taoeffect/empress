@@ -21,6 +21,9 @@ On the TODO is:
 
 - Updating this README (e.g. replacing/fixing sovereign links to Empress)
 - Closing [Issues](<issues>).
+- As much as is feasible making these playbooks "plug-n-play" and "swappable".
+  I.e. make it simple for someone to choose Exim instead of Postfix, MySQL
+  instead of Postgresql, etc.
 
 Services Provided
 -----------------
