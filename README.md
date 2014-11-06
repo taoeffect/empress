@@ -1,5 +1,5 @@
-[![](https://travis-ci.org/taoeffect/empress.png?branch=master)](https://travis-ci.org/taoeffect/empress)
-
+<!-- [![](https://travis-ci.org/taoeffect/empress.png?branch=master)](https://travis-ci.org/taoeffect/empress)
+-->
 Introduction
 ============
 
@@ -12,6 +12,15 @@ use-case, [GitHub's normal forking model doesn't work well][bad-forking].
   [sovereign]: https://github.com/al3x/sovereign
   [upstream-example]: https://github.com/al3x/sovereign/issues/322
   [bad-forking]: https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/#commit-was-made-in-a-fork
+
+__HARD-HAT AREA!__
+
+This project is a work-in-progress and is just lifting off the ground.
+
+On the TODO is:
+
+- Updating this README (e.g. replacing/fixing sovereign links to Empress)
+- Closing [Issues](<issues>).
 
 Services Provided
 -----------------
@@ -29,8 +38,6 @@ What do you get if you point this thing at a VPS? All kinds of good stuff!
     hits your filters.
 -   Webmail via [Roundcube](http://www.roundcube.net/).
 -   Virtual domains for your email, backed by [SQLite](https://www.sqlite.org/).
--   Secure on-disk storage for email and more via
-    [EncFS](http://www.arg0.net/encfs).
 -   Spam fighting via [DSPAM](http://dspam.sourceforge.net/)
 -   Mail server verification via [OpenDKIM](http://www.opendkim.org/), so folks
     know you’re legit.
@@ -59,7 +66,7 @@ What You’ll Need
 ----------------
 
 1.  A VPS (or bare-metal server if you wanna ball hard). My VPS is hosted at
-    [Linode](http://www.linode.com/?r=45405878277aa04ee1f1d21394285da6b43f963b).
+    [RamNode](https://clientarea.ramnode.com/aff.php?aff=909).
     You’ll probably want at least 512 MB of RAM between Apache, Solr, and
     PostgreSQL. Mine has 1024.
 2.  [64-bit Debian 7](http://www.debian.org/) or an equivalent Linux
@@ -67,8 +74,8 @@ What You’ll Need
     Debian will require more tweaks to the playbooks. See Ansible’s different
     [packaging](http://www.ansibleworks.com/docs/modules.html#packaging)
     modules.)
-3.  A wildcard SSL certificate. You can either buy one or self-sign if you want
-    to save money.
+3.  A wildcard SSL certificate. We recommend self-signed certs or the free ones
+    from [StartSSL](https://startssl.com).
 4.  A [Tarsnap](http://www.tarsnap.com) account with some credit in it. You
     could comment this out if you want to use a different backup service.
     Consider paying your hosting provider for backups or using an additional
@@ -186,7 +193,7 @@ installed](http://docs.ansible.com/intro_installation.html#getting-ansible).
 
 To run the whole dang thing:
 
-    ansible-playbook -i ./hosts site.yml
+    ./setup_site.sh
 
 To run just one or more piece, use tags. I try to tag all my includes for easy
 isolated development. For example, to focus in on your firewall setup:
