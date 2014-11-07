@@ -1,8 +1,10 @@
 ---
 # Defines tasks applicable across all machines in the infrastructure.
 
-- name: Add backports repository
-  apt_repository: repo="deb http://http.debian.net/debian wheezy-backports main"
+- name: "Test we're on Debian Wheezy"
+  pause: seconds=0
+  failed_when: >
+    ansible_distribution != "Debian" or ansible_distribution_release != "wheezy"
 
 - name: Update apt cache
   apt: update_cache=yes
@@ -15,24 +17,13 @@
   with_items:
     - apticron
     - build-essential
-    - htop
-    - iftop
-    - iotop
-    - mosh
     - sqlite3
+    - ssl-cert
     - sudo
     - update-notifier-common
-    - zsh
-
-- name: Install necessities and nice-to-haves (from backports)
-  apt: pkg={{ item }} state=installed default_release=wheezy-backports
-  with_items:
-    - git
-    - tmux
 
 - name: Install unattended upgrades (Debian/Ubuntu only)
   apt: pkg=unattended-upgrades state=installed
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Apticron email configuration
   template: src=apticron.conf.j2 dest=/etc/apticron/apticron.conf
@@ -43,4 +34,3 @@
 - include: ssl.yml tags=ssl
 - include: ufw.yml tags=ufw
 - include: security.yml tags=security
-- include: ntp.yml tags=ntp

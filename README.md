@@ -247,6 +247,18 @@ Contributing
 
 Fork me. Branch off of master. Do stuff. Send PR.
 
+# Development
+
+You can install sovereign to a VM with vagrant:
+
+    virtualenv .env
+    .env/bin/pip install -r requirements.txt
+    PATH=".env/bin:$PATH" vagrant up
+
+and to re-run ansible on the same machine:
+
+    PATH=".env/bin:$PATH" vagrant provision
+
 License
 -------
 
