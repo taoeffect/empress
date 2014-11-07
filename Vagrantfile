@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
   # Common Settings
   #
 
-  config.vm.hostname = "sovereign.local"
+  config.vm.hostname = "empress.local"
   config.vm.network "private_network", ip: "172.16.100.2"
 
   config.vm.provision :ansible do |ansible|
@@ -19,11 +19,11 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provider :virtualbox do |v|
-    v.memory = 512
+    v.memory = 256
   end
 
   config.vm.provider :vmware_fusion do |v|
-    v.vmx["memsize"] = "512"
+    v.vmx["memsize"] = "256"
   end
 
   #
@@ -44,21 +44,5 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "debian", primary: true do |debian|
     debian.vm.box = "box-cutter/debian76"
-  end
-
-  #
-  # Ubuntu 12.04 64-bit
-  #
-
-  config.vm.define "precise", autostart: false do |precise|
-    precise.vm.box = "box-cutter/ubuntu1204"
-  end
-
-  #
-  # Ubuntu 14.04 64-bit
-  #
-
-  config.vm.define "trusty", autostart: false do |trusty|
-    trusty.vm.box = "box-cutter/ubuntu1404"
   end
 end

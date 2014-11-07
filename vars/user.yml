@@ -5,8 +5,9 @@
 ###############################################################################
 
 # common
-domain: taoeffect.com
-main_user_name: taoeffect
+domain: example.com
+main_user_name: TODO
+admin_email: "{{ main_user_name }}@{{ domain }}"
 timezone: America/Los_Angeles
 
 # database
@@ -15,3 +16,32 @@ db_admin_password: TODO
 
 # mailserver
 mail_db_password: TODO
+
+mail_virtual_domains:
+  - "{{ domain }}"
+
+mail_virtual_users:
+  - account: "{{ admin_email }}"
+    password_hash: TODO
+  - account: store-and-forward@example.com
+    password_hash: TODO
+
+mail_virtual_aliases:
+  - root@example.com: "{{ admin_email }}"
+  - postmaster@example.com: "{{ admin_email }}"
+  - webmaster@example.com: "{{ admin_email }}"
+  # example of store-and-forward
+  - store-and-forward@example.com: store-and-forward@example.com
+  - store-and-forward@example.com: empress@empress.local
+  # example of forwarding
+  - fwd@example.com: example@gmail.com
+
+mail_db: sqlite # in the future, this should support sqlite, mysql/mariadb, postgres
+
+# migrate from an existing IMAP server
+mail_migration:
+  random@motionwiki.com:
+    # We may want to do an IP address here instead so we can quickly and safely
+    # switch the DNS without messing things up or losing email.
+    imap_host: mail.motionwiki.com
+    password: TODO
