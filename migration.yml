@@ -7,8 +7,6 @@
   sudo: True
   vars_files:
     - vars/defaults.yml
-    - vars/disabled_extras.yml
-    - vars/mail.yml
-    - vars/user.yml
+    - vars/{{ 'testing' if testing is defined else 'user' }}.yml
   roles:
     - migration
