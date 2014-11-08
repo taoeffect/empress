@@ -21,7 +21,7 @@
 - name: Ensure mail directories are in place
   file: >
     state=directory
-    path=/decrypted/{{ item.account.split("@")[0] }}/{{ item.account.split("@")[1] }}
+    path=/decrypted/{{ item.account.split("@")[1] }}/{{ item.account.split("@")[0] }}
     owner=vmail group=dovecot
   with_items: mail_virtual_users
 
