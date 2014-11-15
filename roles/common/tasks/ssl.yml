@@ -1,15 +1,82 @@
+# https://github.com/ansible/ansible/issues/3107
+- name: Find existing SSL keys
+  sudo: no
+  local_action: command test -e roles/common/files/wildcard_private.key
+  register: custom_cert
+  ignore_errors: yes
+
+### Use an existing (valid?) cert, provided by the user ########################
+
 - name: Copy SSL private key into place
-  copy: src=wildcard_private.key dest=/etc/ssl/private/wildcard_private.key group=ssl-cert owner=root mode=640
+  copy: >
+    src=wildcard_private.key
+    dest=/etc/ssl/private/wildcard_private.key
+    group=ssl-cert owner=root mode=640
+  when: custom_cert|success
 
 - name: Copy SSL public certificate into place
-  copy: src=wildcard_public_cert.crt dest=/etc/ssl/certs/wildcard_public_cert.crt group=root owner=root mode=644
+  copy: >
+    src=wildcard_public_cert.crt
+    dest=/etc/ssl/certs/wildcard_public_cert.crt
+    group=root owner=root mode=644
+  when: custom_cert|success
 
 - name: Copy CA combined certificate into place
-  copy: src=wildcard_ca.pem dest=/etc/ssl/certs/wildcard_ca.pem group=root owner=root mode=644
+  copy: >
+    src=wildcard_ca.pem
+    dest=/etc/ssl/certs/wildcard_ca.pem
+    group=root owner=root mode=644
+  when: custom_cert|success
 
 - name: Create a combined version of the public cert with intermediate and root CAs
-  shell: cat /etc/ssl/certs/wildcard_public_cert.crt /etc/ssl/certs/wildcard_ca.pem >
-    /etc/ssl/certs/wildcard_combined.pem creates=/etc/ssl/certs/wildcard_combined.pem
+  shell: >
+    umask 022;
+    cat /etc/ssl/certs/wildcard_public_cert.crt /etc/ssl/certs/wildcard_ca.pem >
+    /etc/ssl/certs/wildcard_combined.pem
+  args:
+    creates: /etc/ssl/certs/wildcard_combined.pem
+  when: custom_cert|success
 
-- name: Set permissions on combined public cert
-  file: name=/etc/ssl/certs/wildcard_combined.pem mode=644
+### If the user didn't provide one, make a self-signed cert ####################
+
+- name: Copy openssl.cnf
+  template: >
+    src=openssl.cnf.j2
+    dest=/etc/ssl/private/openssl.cnf
+    group=root owner=root mode=644
+  when: custom_cert|failed
+
+- name: Generate a private key and CSR
+  shell: >
+    umask 027;
+    openssl req -nodes -newkey rsa:2048
+    -config /etc/ssl/private/openssl.cnf
+    -keyout /etc/ssl/private/wildcard_private.key
+    -out /etc/ssl/private/wildcard.csr
+  args:
+    creates: /etc/ssl/private/wildcard_private.key
+  when: custom_cert|failed
+
+- name: Set SSL private key permissions
+  file: >
+    path=/etc/ssl/private/wildcard_private.key
+    group=ssl-cert owner=root mode=640
+  when: custom_cert|failed
+
+- name: Generate a self-signed SSL public key
+  shell: >
+    umask 022;
+    openssl x509 -req -days 3650
+    -in /etc/ssl/private/wildcard.csr
+    -signkey /etc/ssl/private/wildcard_private.key
+    -out /etc/ssl/certs/wildcard_public_cert.crt
+  args:
+    creates: /etc/ssl/certs/wildcard_public_cert.crt
+  when: custom_cert|failed
+
+- name: Link public cert to the combined location
+  file: >
+    src=/etc/ssl/certs/wildcard_public_cert.crt
+    dest=/etc/ssl/certs/wildcard_combined.pem
+    state=link
+  when: custom_cert|failed

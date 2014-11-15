@@ -112,13 +112,10 @@ Lastly, test your certificate:
 
 #### Self-signed TLS certificate
 
+If you don't purchase or set up an existing certificate, empress will generate
+one for you on the server.
+
 Self-signed certs are free, easy, but are not yet authenticated by TLS (but [will be](https://github.com/okTurtles/dnschain)).
-
-To create a self-signed TLS cert, run the following commands:
-
-    openssl req -nodes -newkey rsa:2048 -keyout roles/common/files/wildcard_private.key -out mycert.csr
-    openssl x509 -req -days 365 -in mycert.csr -signkey roles/common/files/wildcard_private.key -out roles/common/files/wildcard_public_cert.crt
-    cp roles/common/files/wildcard_public_cert.crt roles/common/files/wildcard_ca.pem
 
 ### 2. Get a Tarsnap machine key
 
