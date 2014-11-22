@@ -256,6 +256,10 @@ and to re-run ansible on the same machine:
 
     PATH=".env/bin:$PATH" vagrant provision
 
+to run some automated tests, you can use:
+
+    ./.env/bin/python -m unittests tests
+
 License
 -------
 
