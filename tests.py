@@ -5,8 +5,8 @@ import socket
 import requests
 import os
 
-TEST_SERVER = 'sovereign.local'
-TEST_ADDRESS = 'sovereign@sovereign.local'
+TEST_SERVER = '172.16.100.2'
+TEST_ADDRESS = 'empress@empress.local'
 TEST_PASSWORD = 'foo'
 CA_BUNDLE = 'roles/common/files/wildcard_ca.pem'
 
@@ -27,18 +27,7 @@ class SSHTests(unittest.TestCase):
 
 
 class WebTests(unittest.TestCase):
-    def test_blog_http(self):
-        """Blog is redirecting to https"""
-        # FIXME: requests won't verify sovereign.local with *.sovereign.local cert
-        r = requests.get('http://' + TEST_SERVER, verify=False)
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://' + TEST_SERVER + '/')
-
-        # 403 - Since there is no documents in the blog directory
-        self.assertEquals(r.status_code, 403)
-
+    @unittest.skip("Autoconfig isn't supported yet")
     def test_mail_autoconfig_http_and_https(self):
         """Email autoconfiguration XML file is accessible over both HTTP and HTTPS"""
 
@@ -50,136 +39,6 @@ class WebTests(unittest.TestCase):
             self.assertEquals(r.status_code, 200)
             self.assertIn('application/xml', r.headers['Content-Type'])
             self.assertIn('clientConfig version="1.1"', r.content)
-
-    def test_webmail_http(self):
-        """Webmail is redirecting to https and displaying login page"""
-        r = requests.get('http://mail.' + TEST_SERVER)
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://mail.' + TEST_SERVER + '/')
-
-        # 200 - We should be at the login page
-        self.assertEquals(r.status_code, 200)
-        self.assertIn(
-            'Welcome to Roundcube Webmail',
-            r.content
-        )
-
-    def test_zpush_http_unauthorized(self):
-        r = requests.get('http://mail.' + TEST_SERVER + '/Microsoft-Server-ActiveSync')
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://mail.' + TEST_SERVER + '/Microsoft-Server-ActiveSync')
-
-        # Unauthorized
-        self.assertEquals(r.status_code, 401)
-
-    def test_zpush_https(self):
-        r = requests.post('https://mail.' + TEST_SERVER + '/Microsoft-Server-ActiveSync',
-                          auth=('sovereign@sovereign.local', 'foo'),
-                          params={
-                              'DeviceId': '1234',
-                              'DeviceType': 'testbot',
-                              'Cmd': 'Ping',
-                          })
-
-        self.assertEquals(r.headers['content-type'],
-                          'application/vnd.ms-sync.wbxml')
-        self.assertEquals(r.headers['ms-server-activesync'],
-                          '14.0')
-
-    def test_owncloud_http(self):
-        """ownCloud is redirecting to https and displaying login page"""
-        r = requests.get('http://cloud.' + TEST_SERVER)
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://cloud.' + TEST_SERVER + '/')
-
-        # 200 - We should be at the login page
-        self.assertEquals(r.status_code, 200)
-        self.assertIn(
-            'ownCloud',
-            r.content
-        )
-
-    def test_selfoss_http(self):
-        """selfoss is redirecting to https and displaying login page"""
-        r = requests.get('http://news.' + TEST_SERVER)
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://news.' + TEST_SERVER + '/')
-
-        # 200 - We should be at the login page
-        self.assertEquals(r.status_code, 200)
-        self.assertIn(
-            'selfoss',
-            r.content
-        )
-        self.assertIn(
-            'login',
-            r.content
-        )
-
-    def test_cgit_http(self):
-        """CGit web interface is displaying home page"""
-        r = requests.get('http://git.' + TEST_SERVER, verify=False)
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://git.' + TEST_SERVER + '/')
-
-        # 200 - We should be at the repository page
-        self.assertEquals(r.status_code, 200)
-        self.assertIn(
-            'git repository',
-            r.content
-        )
-
-    def test_newebe_http(self):
-        """Newebe is displaying home page"""
-        r = requests.get('http://newebe.' + TEST_SERVER, verify=False)
-
-        # We should be redirected to https
-        self.assertEquals(r.history[0].status_code, 301)
-        self.assertEquals(r.url, 'https://newebe.' + TEST_SERVER + '/')
-
-        # 200 - We should be at the repository page
-        self.assertEquals(r.status_code, 200)
-        self.assertIn(
-            'Newebe, Freedom to Share',
-            r.content
-        )
-
-
-class IRCTests(unittest.TestCase):
-    def test_irc_auth(self):
-        """ZNC is accepting encrypted logins"""
-        import ssl
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        ssl_sock = ssl.wrap_socket(s, ca_certs=CA_BUNDLE, cert_reqs=ssl.CERT_REQUIRED)
-        ssl_sock.connect((TEST_SERVER, 6697))
-
-        # Check the encryption parameters
-        cipher, version, bits = ssl_sock.cipher()
-        self.assertEquals(cipher, 'AES256-GCM-SHA384')
-        self.assertEquals(version, 'TLSv1/SSLv3')
-        self.assertEquals(bits, 256)
-
-        # Login
-        ssl_sock.send('CAP REQ sasl multi-prefix\r\n')
-        ssl_sock.send('PASS foo\r\n')
-        ssl_sock.send('NICK sovereign\r\n')
-        ssl_sock.send('USER sovereign 0 * Sov\r\n')
-
-        # Read until we see the ZNC banner (or timeout)
-        while 1:
-            r = ssl_sock.recv(1024)
-            if 'Connected to ZNC' in r:
-                break
 
 
 def new_message(from_email, to_email):
@@ -251,20 +110,20 @@ class MailTests(unittest.TestCase):
     def test_smtps(self):
         """Email sent from an MUA via SMTPS is delivered"""
         import smtplib
-        msg, subject = new_message(TEST_ADDRESS, 'root@sovereign.local')
+        msg, subject = new_message(TEST_ADDRESS, 'empress@empress.local')
         s = smtplib.SMTP_SSL(TEST_SERVER, 465)
         s.login(TEST_ADDRESS, TEST_PASSWORD)
-        s.sendmail(TEST_ADDRESS, ['root@sovereign.local'], msg)
+        s.sendmail(TEST_ADDRESS, ['empress@empress.local'], msg)
         s.quit()
         self.assertIMAPReceived(subject)
 
     def test_smtps_delimiter_to(self):
         """Email sent to address with delimiter is delivered"""
         import smtplib
-        msg, subject = new_message(TEST_ADDRESS, 'root+foo@sovereign.local')
+        msg, subject = new_message(TEST_ADDRESS, 'empress+foo@empress.local')
         s = smtplib.SMTP_SSL(TEST_SERVER, 465)
         s.login(TEST_ADDRESS, TEST_PASSWORD)
-        s.sendmail(TEST_ADDRESS, ['root+foo@sovereign.local'], msg)
+        s.sendmail(TEST_ADDRESS, ['empress+foo@empress.local'], msg)
         s.quit()
         self.assertIMAPReceived(subject)
 
@@ -274,7 +133,7 @@ class MailTests(unittest.TestCase):
         s = smtplib.SMTP_SSL(TEST_SERVER, 465)
 
         with self.assertRaisesRegexp(smtplib.SMTPRecipientsRefused, 'Access denied'):
-            s.sendmail(TEST_ADDRESS, ['root@sovereign.local'], 'Test')
+            s.sendmail(TEST_ADDRESS, ['empress@empress.local'], 'Test')
 
         s.quit()
 
@@ -303,10 +162,10 @@ class MailTests(unittest.TestCase):
         import imaplib
 
         # Send a message to root
-        msg, subject = new_message(TEST_ADDRESS, 'root@sovereign.local')
+        msg, subject = new_message(TEST_ADDRESS, 'empress@empress.local')
         s = smtplib.SMTP_SSL(TEST_SERVER, 465)
         s.login(TEST_ADDRESS, TEST_PASSWORD)
-        s.sendmail(TEST_ADDRESS, ['root@sovereign.local'], msg)
+        s.sendmail(TEST_ADDRESS, ['empress@empress.local'], msg)
         s.quit()
 
         sleep(1)
@@ -319,12 +178,12 @@ class MailTests(unittest.TestCase):
         _, data = m.fetch(res[0], '(RFC822)')
 
         self.assertIn(
-            'DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sovereign.local;',
+            'DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=empress.local;',
             data[0][1]
         )
 
         self.assertIn(
-            'ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits)',
+            'DHE-RSA-AES256-GCM-SHA384 (256/256 bits)',
             data[0][1]
         )
 
@@ -374,47 +233,9 @@ class MailTests(unittest.TestCase):
     def test_pop3s(self):
         """Connects with POP3S and asserts the existance of an email, then deletes it"""
         import smtplib
-        msg, subject = new_message(TEST_ADDRESS, 'root@sovereign.local')
+        msg, subject = new_message(TEST_ADDRESS, 'root@empress.local')
         s = smtplib.SMTP_SSL(TEST_SERVER, 465)
         s.login(TEST_ADDRESS, TEST_PASSWORD)
-        s.sendmail(TEST_ADDRESS, ['root@sovereign.local'], msg)
+        s.sendmail(TEST_ADDRESS, ['empress@empress.local'], msg)
         s.quit()
         self.assertPOP3Received(subject)
-
-
-class XMPPTests(unittest.TestCase):
-    def test_xmpp_c2s(self):
-        """Prosody is listening on 5222 for clients and requiring TLS"""
-
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((TEST_SERVER, 5222))
-
-        # Based off http://wiki.xmpp.org/web/Programming_Jabber_Clients
-        s.send("<stream:stream xmlns:stream='http://etherx.jabber.org/streams' "
-               "xmlns='jabber:client' to='sovereign.local' version='1.0'>")
-
-        data = s.recv(1024)
-        s.close()
-
-        self.assertRegexpMatches(
-            data,
-            "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'><required/></starttls>"
-        )
-
-    def test_xmpp_s2s(self):
-        """Prosody is listening on 5269 for servers"""
-
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((TEST_SERVER, 5269))
-
-        # Base off http://xmpp.org/extensions/xep-0114.html
-        s.send("<stream:stream xmlns:stream='http://etherx.jabber.org/streams' "
-               "xmlns='jabber:component:accept' to='sovereign.local'>")
-
-        data = s.recv(1024)
-        s.close()
-
-        self.assertRegexpMatches(
-            data,
-            "from='sovereign.local'"
-        )
