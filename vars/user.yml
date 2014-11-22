@@ -38,7 +38,7 @@ mail_virtual_aliases:
 mail_db: sqlite # in the future, this should support sqlite, mysql/mariadb, postgres
 
 # migrate from an existing IMAP server
-# if you don't want to migrate from an old IMAP server, modify setup_site.sh
+# if you don't want to migrate from an old IMAP server, delete mail_migration
 mail_migration:
   random@motionwiki.com:
     # We may want to do an IP address here instead so we can quickly and safely
