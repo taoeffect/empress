@@ -26,7 +26,7 @@ stateOrProvinceName    = self-signed
 localityName           = doesn't matter
 0.organizationName     = filler values
 organizationalUnitName = go here
-commonName             = {{ domain }}
+commonName             = *.{{ domain }}
 emailAddress           = {{ admin_email }}
 
 [ v3_req ]
@@ -41,5 +41,5 @@ basicConstraints = CA:true
 
 [ alt_names ]
 {% for dn in mail_virtual_domains %}
-DNS.{{ loop.index }} = {{ dn }}
+DNS.{{ loop.index }} = *.{{ dn }}
 {% endfor %}
