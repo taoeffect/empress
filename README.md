@@ -92,6 +92,21 @@ What You’ll Need
 Installation
 ------------
 
+### 0. Clone the Repository
+
+Make sure you have `git`, `python2`, `pip`, and `virtualenv` before starting.
+
+    git clone git://github.com/taoeffect/empress.git
+    cd empress
+    virtualenv .env
+    .env/bin/pip install -r requirements.txt
+
+[Prior to 1.3, pip doesn't verify SSL certificates][ssl-verify], which impacts
+Debian Wheezy, but will not impact Jessie. You may install an alternate version
+of ansible (eg. from `wheezy-backports`) at your own risk.
+
+  [ssl-verify]: http://pip.readthedocs.org/en/1.5.X/reference/pip_install.html#ssl-certificate-verification
+
 ### 1. Get a wildcard TLS certificate
 
 Generate a private key and a certificate signing request (CSR):
