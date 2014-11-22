@@ -9,4 +9,5 @@
     - vars/defaults.yml
     - vars/{{ 'testing' if testing is defined else 'user' }}.yml
   roles:
-    - migration
+    - role: migration
+      when: mail_migration is defined and mail_migration

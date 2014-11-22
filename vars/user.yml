@@ -6,25 +6,24 @@
 
 # common
 domain: example.com
-main_user_name: TODO
+main_user_name: TODO # your primary day-to-day username for ssh/email/etc
 admin_email: "{{ main_user_name }}@{{ domain }}"
 timezone: America/Los_Angeles
 
-# database
+# database: Only needed if you aren't using sqlite, otherwise, ignore/delete it
 db_admin_username: postgres
 db_admin_password: TODO
-
-# mailserver
 mail_db_password: TODO
 
+# mailserver
 mail_virtual_domains:
   - "{{ domain }}"
 
 mail_virtual_users:
   - account: "{{ admin_email }}"
-    password_hash: TODO
+    password_hash: TODO # see the README for how to generate these values
   - account: store-and-forward@example.com
-    password_hash: TODO
+    password_hash: TODO # see the README for how to generate these values
 
 mail_virtual_aliases:
   - root@example.com: "{{ admin_email }}"
@@ -39,6 +38,7 @@ mail_virtual_aliases:
 mail_db: sqlite # in the future, this should support sqlite, mysql/mariadb, postgres
 
 # migrate from an existing IMAP server
+# if you don't want to migrate from an old IMAP server, delete mail_migration
 mail_migration:
   random@motionwiki.com:
     # We may want to do an IP address here instead so we can quickly and safely
