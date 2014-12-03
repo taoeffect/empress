@@ -1,3 +1,8 @@
+- name: "Ensure that root and postmaster aliases exist"
+  pause: seconds=0
+  failed_when: >
+    mail_virtual_aliases|selectattr("postmaster@" + domain, "root@" + domain)|len == 2
+
 - include: postfix.yml tags=postfix
 - include: dovecot.yml tags=dovecot
 - include: opendkim.yml tags=opendkim
