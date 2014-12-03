@@ -1,0 +1,18 @@
+---
+# Installs all the stuff that makes sense to use together for testing purposes
+# eventually we may want to have multiple implementations of this to test common
+# setups, eg. different vagrant configs for different sql backends.
+
+- hosts: all
+  # user should be defined by vagrant
+  sudo: True
+  gather_facts: True
+  vars_files:
+    - vars/defaults.yml
+    - vars/testing.yml
+
+  roles:
+    - common
+    - mailserver
+    - tarsnap
+    # - mailpile # fix this

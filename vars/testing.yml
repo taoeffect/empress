@@ -5,6 +5,7 @@
 ###############################################################################
 
 # common
+testing: true
 domain: empress.local
 main_user_name: empress
 timezone: America/Los_Angeles

@@ -9,13 +9,13 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "172.16.100.2"
 
   config.vm.provision :ansible do |ansible|
-    ansible.playbook = "site.yml"
+    ansible.playbook = "test.yml"
     ansible.host_key_checking = false
-    ansible.extra_vars = { ansible_ssh_user: "vagrant", testing: true }
+    ansible.extra_vars = { testing: true }
 
     # ansible.tags = ["blog"]
     # ansible.skip_tags = ["openvpn"]
-    # ansible.verbose = "vvvv"
+    ansible.verbose = "vvvv"
   end
 
   config.vm.provider :virtualbox do |v|
@@ -24,6 +24,18 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :vmware_fusion do |v|
     v.vmx["memsize"] = "256"
+  end
+
+  config.vm.provider :digital_ocean do |provider, override|
+    override.ssh.private_key_path = "~/.ssh/id_rsa"
+    override.vm.box = "digital_ocean"
+    override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+
+    provider.ssh_key_name = "TODO"
+    provider.token = "TODO"
+    provider.image = "debian-7-0-x64"
+    provider.region = "nyc3"
+    provider.size = "512mb"
   end
 
   #
