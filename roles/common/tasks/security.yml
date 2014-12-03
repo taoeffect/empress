@@ -15,7 +15,3 @@
 
 - name: Ensure fail2ban is started
   service: name=fail2ban state=started
-
-- name: Update sshd config to disallow root logins
-  lineinfile: dest=/etc/ssh/sshd_config regexp=^PermitRootLogin line="PermitRootLogin no" state=present
-  notify: restart ssh
