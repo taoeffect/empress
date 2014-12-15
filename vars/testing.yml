@@ -27,6 +27,8 @@ mail_virtual_users:
     password_hash: "{SHA512-CRYPT}$6$8aji.exE4YZlagSo$9bQaf.Rf0HEtzf359RzyzKtvw6Zbm4NDA/TubdCNhbdSNk3ygKua3jEajzcI7/l2hrmJjqvPYjQaSBPqcUP0N/"
 
 mail_virtual_aliases:
+  - root@empress.local: empress@empress.local
+  - postmaster@empress.local: empress@empress.local
   # example of forwarding
   - fwd@empress.local: empress@empress.local
   # example of store-and-forward

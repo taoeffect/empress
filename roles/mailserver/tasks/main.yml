@@ -1,7 +1,29 @@
-- name: "Ensure that root and postmaster aliases exist"
+---
+- name: Ensure that root and postmaster aliases exist
+  # We can't use failed_when alone because ansible's conditional evaluation is
+  # incredibly limiting:
+  # https://github.com/ansible/ansible/blob/release1.8.2/lib/ansible/utils/__init__.py#L255
+  set_fact: >
+    {% set aliases = [] %}
+    {% for alias in mail_virtual_aliases %}
+      {# http://stackoverflow.com/a/21860373/130598 #}
+      {% set _ = aliases.extend(alias.keys()|list) %}
+    {% endfor %}
+    {% set required_aliases = ["root@" + domain, "postmaster@" + domain] %}
+    {% set required_aliases_exist_when_empty = [] %}
+    {% for alias in required_aliases %}
+      {% if alias not in aliases %}
+        {# http://stackoverflow.com/a/21860373/130598 #}
+        {% set _ = required_aliases_exist_when_empty.append(False) %}
+      {% endif %}
+    {% endfor %}
+    required_aliases_exist="{{ required_aliases_exist_when_empty|length == 0 }}"
+  tags: mailserver
+
+- name: Ensure that root and postmaster aliases exist
   pause: seconds=0
-  failed_when: >
-    mail_virtual_aliases|selectattr("postmaster@" + domain, "root@" + domain)|len == 2
+  failed_when: not required_aliases_exist|bool
+  tags: mailserver
 
 - include: postfix.yml tags=postfix
 - include: dovecot.yml tags=dovecot
