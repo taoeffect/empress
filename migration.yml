@@ -10,4 +10,4 @@
     - vars/{{ 'testing' if testing is defined else 'user' }}.yml
   roles:
     - role: migration
-      when: mail_migration is defined and mail_migration
+      when: mail_migration is defined

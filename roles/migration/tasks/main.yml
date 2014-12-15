@@ -1,23 +1,15 @@
 ---
-- name: migrate over user from dreamhost
-  command: >
-    {% set username, domain = item.key.split("@") %}
-    dsync -o imapc_host={{ item.value.imap_host }}
-    -o imapc_password='{{ item.value.password }}'
-    -o imapc_user={{ item.key }}
-    -o mail_location=maildir:/decrypted/{{ domain }}/{{ username }}
-    -o imapc_features='rfc822.size{# fetch-headers #}'
-    -o mail_prefetch_count=20
-    -o imapc_list_prefix=INBOX
-    -o imapc_port=993
-    -o imapc_ssl=imaps
-    -o imapc_ssl_ca_dir=/etc/ssl
-    -o imapc_ssl_verify=no
-    -u {{ item.key }}
-    -v -R backup imapc:
-  args:
-    creates: >
-      {% set username, domain = item.key.split("@") %}
-      /decrypted/{{ domain }}/{{ username }}/dovecot.index.log
-  with_dict: mail_migration
-  tags: migration
+- { include: dsync.yml, when: mail_migration == "dsync" }
+- { include: larch.yml, when: mail_migration == "larch" }
+
+
+
+# # Example from Ansible Playbooks
+# - script: /some/local/script.sh --some-arguments 1234
+
+# # Run a script that creates a file, but only if the file is not yet created
+# - script: /some/local/create_file.sh --some-arguments 1234 creates=/the/created/file.txt
+
+# # Run a script that removes a file, but only if the file is not yet removed
+# - script: /some/local/remove_file.sh --some-arguments 1234 removes=/the/removed/file.txt
+
