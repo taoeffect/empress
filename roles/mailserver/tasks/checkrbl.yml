@@ -1,3 +1,6 @@
+- name: Install dependencies for check-rbl
+  apt: pkg=libnet-ip-perl state=installed
+
 - name: Download check-rbl
   get_url: url=https://raw.github.com/lukecyca/check-rbl/2af83dd9c4/check-rbl.pl dest=/opt/check-rbl.pl
 
