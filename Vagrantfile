@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-credentials = YAML.load_file('private/credentials.yml')
+credentials = YAML.load_file("private/credentials.yml")
 
 Vagrant.configure("2") do |config|
   #
@@ -44,8 +44,8 @@ Vagrant.configure("2") do |config|
 
   # https://github.com/mitchellh/vagrant-google#quick-start
   config.vm.provider :google do |google, override|
-    google.google_project_id   = credentials['project_id']
-    google.google_client_email = credentials['client_email']
+    google.google_project_id   = credentials["project_id"]
+    google.google_client_email = credentials["client_email"]
     google.google_key_location = "private/key.p12"
 
     google.image = "debian-7-wheezy-v20141205"
