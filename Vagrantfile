@@ -2,6 +2,8 @@
 
 require 'yaml'
 
+credentials = YAML.load_file('private/credentials.yml')
+
 Vagrant.configure("2") do |config|
   #
   # Common Settings
@@ -42,12 +44,12 @@ Vagrant.configure("2") do |config|
 
   # https://github.com/mitchellh/vagrant-google#quick-start
   config.vm.provider :google do |google, override|
-    credentials = YAML.load_file('private/credentials.yml')
     google.google_project_id   = credentials['project_id']
     google.google_client_email = credentials['client_email']
     google.google_key_location = "private/key.p12"
 
     google.image = "debian-7-wheezy-v20141205"
+    google.machine_type = "n1-highcpu-2"
     google.name = "empress-instance"
 
     # YOU MUST MANUALLY UPLOAD YOUR SSH PUBLIC KEY VIA GOOGLE'S THINGY:
