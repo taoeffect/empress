@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 
+require 'yaml'
+
 Vagrant.configure("2") do |config|
   #
   # Common Settings
@@ -36,6 +38,28 @@ Vagrant.configure("2") do |config|
     provider.image = "debian-7-0-x64"
     provider.region = "nyc3"
     provider.size = "512mb"
+  end
+
+  # https://github.com/mitchellh/vagrant-google#quick-start
+  config.vm.provider :google do |google, override|
+    credentials = YAML.load_file('private/credentials.yml')
+    google.google_project_id   = credentials['project_id']
+    google.google_client_email = credentials['client_email']
+    google.google_key_location = "private/key.p12"
+
+    google.image = "debian-7-wheezy-v20141205"
+    google.name = "empress-instance"
+
+    # YOU MUST MANUALLY UPLOAD YOUR SSH PUBLIC KEY VIA GOOGLE'S THINGY:
+    #     developers console -> Compute -> Compute Engine -> Metadata -> Tab SSH Keys
+    # MAKE SURE THAT THE LAST THING IN YOUR KEY IS THE USERNARM 'deploy' LIKE SO
+    # 
+    #   ssh-rsa AAL...10M= deploy
+    #   
+    override.ssh.username = "deploy"
+    override.ssh.private_key_path = "~/.ssh/id_rsa"
+    override.vm.box = "gce"
+    override.vm.box_url = "https://github.com/mitchellh/vagrant-google/raw/master/google.box"
   end
 
   #
