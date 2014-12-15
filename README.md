@@ -3,6 +3,8 @@
 Introduction
 ============
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/taoeffect/empress?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 **Empress is a lightweight email-focused fork of [Sovereign][sovereign]** focused on:
 
 1. Making it __simple__ to run __your own__ secure email server.
